@@ -31,12 +31,24 @@ def decompress_bytes(path):
     return out.stdout
 
 
-def compress_to(src_bytes, dest):
-    proc = subprocess.run(['zstd', '-c', '-q', '-3'], input=src_bytes, capture_output=True)
+def frame_bytes(text):
+    """压出一个独立 zstd 帧。
+
+    坑(2026-10-10 事故):会话日志是逐帧 zstd,宿主打开会话时强校验
+    "首帧恰好只含 header 行"。把全文重压成单帧会让会话"能列出来、
+    打不开"。正确做法:保留原文件字节不动,把新增事件压成新帧追加到
+    尾部——这正是宿主自己追加事件的方式。
+    """
+    proc = subprocess.run(['zstd', '-c', '-q', '-3'], input=text.encode(), capture_output=True)
     if proc.returncode != 0:
         raise RuntimeError(proc.stderr.decode()[:200])
+    return proc.stdout
+
+
+def append_frame(dest, line):
+    """把一行事件作为新 zstd 帧原子追加到会话文件尾部。"""
     tmp = dest.parent / (dest.name + '.batchrename.tmp')
-    tmp.write_bytes(proc.stdout)
+    tmp.write_bytes(dest.read_bytes() + frame_bytes(line + '\n'))
     os.replace(tmp, dest)
 
 
@@ -149,10 +161,9 @@ def main(apply_mode):
                 },
             }
             (BACKUP / sdir.name).with_suffix('.zstd.bak').write_bytes(zpath.read_bytes())
-            new_raw = raw if raw.endswith('\n') else raw + '\n'
-            new_raw += json.dumps(event, ensure_ascii=False, separators=(',', ':')) + '\n'
             if apply_mode:
-                compress_to(new_raw.encode('utf-8'), zpath)
+                # 原帧字节原样保留,新事件压成独立帧追加(见 frame_bytes 注释)。
+                append_frame(zpath, json.dumps(event, ensure_ascii=False, separators=(',', ':')))
             done.append({'id': sid, 'dir': sdir.name, 'title': title})
         except Exception as error:
             failed.append({'id': sid, 'reason': f'{type(error).__name__}: {error}'})

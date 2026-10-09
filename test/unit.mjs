@@ -9,6 +9,7 @@ import {
   buildRuledTitle,
   shouldKeepTitle,
   selectMessages,
+  latestConversationStamp,
 } from '../lib/index.js'
 
 test('formatStamp 按本地时区补零', () => {
@@ -74,18 +75,41 @@ test('shouldKeepTitle 保留 dot 编号标题、放过规则格式', () => {
   assert.equal(warnings.length, 1)
 })
 
-test('selectMessages 预算内全量、超预算保首条加最新', () => {
+test('selectMessages 预算内全量、超预算全部给最新消息', () => {
   const messages = (texts) => texts.map((text, index) => ({ seq: index, text }))
   const small = messages(['帮我调试', '还是不行', '再看看'])
   assert.deepEqual(selectMessages(small, 8192), small)
 
-  const big = messages(['第一条', ...Array.from({ length: 200 }, (_, i) => `消息内容 ${i}`)])
+  const big = messages(['第一句旧话题', ...Array.from({ length: 200 }, (_, i) => `最新话题 ${i}`)])
   const selected = selectMessages(big, 600)
-  // 首条保留,尾部按预算截取,整体升序。
-  assert.equal(selected[0].text, '第一条')
+  // 首条不再强制保留:预算全部用于最新消息。
+  assert.ok(selected.length < 201)
+  assert.ok(!selected.some((m) => m.text === '第一句旧话题'))
   assert.deepEqual([...selected].sort((a, b) => a.seq - b.seq), selected)
-  assert.ok(selected.at(-1).seq > selected[1].seq)
+  assert.equal(selected.at(-1).seq, 200)
+  assert.equal(selected.at(-2).seq, 199)
   const framed = JSON.stringify(selected.map((message) => ({ text: message.text })))
   assert.ok(Buffer.byteLength(framed, 'utf8') <= 600 + 200)
   assert.deepEqual(selectMessages([], 100), [])
+  // 极小预算:只装得下能装的最后几条,也不含旧首条。
+  const tiny = selectMessages(big, 80)
+  assert.ok(tiny.length >= 1 && tiny.every((m) => m.seq >= 198))
+})
+
+test('latestConversationStamp 取最近 user/message 日期', () => {
+  const day = (n) => new Date(2026, 9, n).getTime() // 2026-10-n,本地时区
+  const events = [
+    { type: 'session', time: day(1) },
+    { type: 'user/message', time: day(1), data: {} },
+    { type: 'assistant/message', time: day(2), data: {} },
+    { type: 'user/message', time: day(12), data: {} },
+    { type: 'turn/end', time: day(12), data: {} },
+  ]
+  assert.equal(latestConversationStamp(events), '1012')
+  // 无 user/message:退到最后事件时间
+  assert.equal(latestConversationStamp([{ type: 'turn/end', time: day(3), data: {} }]), '1003')
+  // 空事件:退 fallback
+  assert.equal(latestConversationStamp([], day(5)), '1005')
+  // 时间非法:跳过该条继续倒序找
+  assert.equal(latestConversationStamp([{ type: 'user/message', time: Number.NaN }, ...events.slice(-1)]), '1012')
 })
