@@ -1,0 +1,38 @@
+{
+  "name": "dsh-session-title-ruled",
+  "version": "0.1.0",
+  "description": "按个人规则自动命名 dsh 会话：MMDD｜类型｜对话名。替换内置自然语言标题提供方，八类分类 + 起始日期固定 + 编号标题（dot 远程任务）保持不变。Ruled session titles for DeepSeek Harness.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "files": [
+    "lib/index.js",
+    "cordis.patch.yml",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "test": "node --test test/unit.mjs"
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.4"
+  },
+  "keywords": [
+    "deepseek",
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "session-title"
+  ],
+  "license": "MIT"
+}

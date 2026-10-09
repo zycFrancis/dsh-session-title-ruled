@@ -1,0 +1,7 @@
+# dsh-session-title-ruled bundle patch: 一个 host 行,挂到目标 profile。
+# 注意:dsh-session-title 服务只允许注册一个 provider,启用本插件前必须在
+# profile 层停用内置的 session-title-llm 条目(见 README)。
+- insert:
+    - id: session-title-ruled
+      name: dsh-session-title-ruled
+      config: {}
