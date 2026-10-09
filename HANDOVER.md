@@ -68,3 +68,17 @@
   修复后 143/143 过宿主 validateStoredEvents,并克隆两个真实会话做打开+续聊探测,
   宿主在我追加的事件之后继续写入无冲突。apply 脚本已改为 append_frame 并在注释里记录此坑。
 - **生效条件**:插件 0.2.0 需重启 DSH Desktop;存量会话标题将在各自下次收到消息时按新规则刷新。
+
+## 2026-10-10 追加三:官方化整改、三轮审查与 GitHub 发布
+
+- **整改**:package.json 补 dshhub 元数据(schemaVersion 1)/repository/icon/files/engines(>=20.3);
+  新增 LICENSE(MIT)、icon.svg、README.en.md、docs/design.md;npm pack 9 文件 16.3kB 与声明一致。
+- **三轮独立审查**(三位不同子代理,均未参与实现):
+  - R1:1 major(apply/generate 零测试)+9 minor → 全部修复(a5155d7);
+  - R2:核验 R1 修复 10/10,新发现 6 条(含单条超预算消息致选择为空的真 bug)→ 修复(a58b97d);
+  - R3 终审:核验 R2 修复 4/4,宿主源码交叉验证 messageSeqs 契约,发布判定**通过**;遗留 4 个
+    不阻断 minor(efforts[0] 排序假设、/tmp symlink 面等,已记录)。
+- **测试**:23 例(11 纯逻辑 + 12 mock 集成),npm test 23/23。
+- **发布**:https://github.com/zycFrancis/dsh-session-title-ruled (public,master 7 commits,
+  tag v0.2.0 + gh release);发布后实证:git 规格安装 → 组合树解析 → 完整运行时生成
+  `1010｜日常｜夏普比率解释`,provider 归因正确,测试 profile/会话已清理。
