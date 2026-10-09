@@ -55,6 +55,9 @@ test('normalizeName 压空白、去首尾标点、按码点截断', () => {
   assert.equal(normalizeName('a｜b', 16), 'a／b')
   // emoji 按码点计数,不切断代理对。
   assert.equal(normalizeName('x🎉🎉🎉🎉', 3), 'x🎉🎉')
+  // 截断产生的新尾部标点也要清掉。
+  assert.equal(normalizeName('一二三四。五六', 5), '一二三四')
+  assert.equal(normalizeName('一二三。四五', 5), '一二三。四')
 })
 
 test('buildRuledTitle 输出三段全角竖线格式', () => {

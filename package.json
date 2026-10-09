@@ -34,7 +34,7 @@
     },
     "compatibility": {
       "dsh": ">=0.1.7-rc.2",
-      "node": ">=20"
+      "node": ">=20.3"
     },
     "permissions": {
       "network": []
@@ -52,13 +52,13 @@
   ],
   "icon": "./icon.svg",
   "scripts": {
-    "test": "node --test test/unit.mjs"
+    "test": "node --test test/unit.mjs test/harness.mjs"
   },
   "dependencies": {
     "@deepseek-ai/schemastery": "^3.18.4"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20.3"
   },
   "repository": {
     "type": "git",

@@ -62,7 +62,7 @@ desktop / web profile 由各自 app 掌管，重启后生效。
 | `maxNameCharacters` | 16 | 对话名硬上限（码点截断） |
 | `maxInputBytes` | 8192 | 框成 JSON 后的输入字节预算；超预算时从最新向前装满为止 |
 | `maxOutputTokens` | 512 | 标题请求输出上限（思考型模型降档后仍需余量） |
-| `timeoutMs` | 45000 | 单次标题请求超时 |
+| `timeoutMs` | 45000 | 单次流式调用超时（首调与空输出降级重试各自独立计时） |
 | `keepTitlePatterns` | `['^\\d{2}｜']` | 现有标题命中任一正则则拒绝重命名（保护 `01｜MS Research` 类编号体系） |
 | `debugLog` | false | 落 `/tmp/dsh-session-title-ruled.log` 便于排查 |
 
@@ -78,7 +78,7 @@ desktop / web profile 由各自 app 掌管，重启后生效。
 ## 排查
 
 - 启动日志搜 `session-title-ruled provider registered`；冲突会直接抛 `already registered`（内置 provider 未停用）。
-- `debugLog: true` 后看 `/tmp/dsh-session-title-ruled.log`（generating / accepted / keep / unparseable 四类行）。
+- `debugLog: true` 后看 `/tmp/dsh-session-title-ruled.log`（generating / accepted / keep / unparseable / empty-output-retry 五类行）。
 - 标题不更新：确认会话未被手动改名钉住、标题未命中 `keepTitlePatterns`、路由模型可用。
 
 ## 开发

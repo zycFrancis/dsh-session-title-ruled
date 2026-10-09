@@ -62,7 +62,7 @@ Desktop / web profiles are owned by their apps; changes apply after restart.
 | `maxNameCharacters` | 16 | Hard cap on the name (code-point truncation) |
 | `maxInputBytes` | 8192 | Byte budget for the framed JSON input; over budget, the most recent messages are kept first |
 | `maxOutputTokens` | 512 | Output cap for the title request (headroom after reasoning-effort downgrade) |
-| `timeoutMs` | 45000 | Per-request timeout |
+| `timeoutMs` | 45000 | Per-stream-call timeout (the first call and the empty-output retry each get their own window) |
 | `keepTitlePatterns` | `['^\\d{2}｜']` | Existing titles matching any pattern are never renamed (protects numbered schemes like `01｜MS Research`) |
 | `debugLog` | false | Write `/tmp/dsh-session-title-ruled.log` for diagnosis |
 
@@ -78,7 +78,7 @@ Desktop / web profiles are owned by their apps; changes apply after restart.
 ## Troubleshooting
 
 - Search startup logs for `session-title-ruled provider registered`; a conflict raises `already registered` (the built-in provider was not disabled).
-- With `debugLog: true`, read `/tmp/dsh-session-title-ruled.log` (generating / accepted / keep / unparseable lines).
+- With `debugLog: true`, read `/tmp/dsh-session-title-ruled.log` (generating / accepted / keep / unparseable / empty-output-retry lines).
 - Title not updating: the session may be pinned by a manual rename, the title may match `keepTitlePatterns`, or the route's model may be unavailable.
 
 ## Development

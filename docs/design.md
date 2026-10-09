@@ -53,6 +53,6 @@ llm 流式 chunk 协议)在插件内自带实现;倒序扫日志这类折叠逻�
 ## 兼容性
 
 - dsh `>=0.1.7-rc.2`(依赖 `ctx.sessionTitle` 注册表语义与 llm 流式 chunk 协议)。
-- Node `>=20`(`AbortSignal.any` / `AbortSignal.timeout`)。
+- Node `>=20.3`(`AbortSignal.any` / `AbortSignal.timeout`)。
 - 运行时依赖仅 `@deepseek-ai/schemastery`(Config schema);宿主侧由 loader 注入
   `sessionTitle` / `llm` 服务。
