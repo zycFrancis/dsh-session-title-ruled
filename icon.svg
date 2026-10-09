@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- 会话卡片:顶部标题栏 + 类型徽标 + 文本行 -->
+  <rect x="6" y="10" width="52" height="44" rx="8" fill="none" stroke="currentColor" stroke-width="3" opacity="0.6"/>
+  <!-- 标题栏里的日期块 MMDD -->
+  <rect x="12" y="17" width="14" height="8" rx="2" fill="currentColor" opacity="0.85"/>
+  <!-- 全角竖线分隔 -->
+  <rect x="29" y="17" width="2.5" height="8" rx="1" fill="currentColor" opacity="0.55"/>
+  <!-- 类型徽标 -->
+  <rect x="34" y="17" width="8" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.85"/>
+  <rect x="36.5" y="19.5" width="3" height="3" rx="0.8" fill="currentColor" opacity="0.85"/>
+  <!-- 对话名文本行 -->
+  <rect x="12" y="33" width="34" height="3.5" rx="1.75" fill="currentColor" opacity="0.75"/>
+  <rect x="12" y="41" width="26" height="3.5" rx="1.75" fill="currentColor" opacity="0.45"/>
+</svg>

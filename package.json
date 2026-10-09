@@ -1,7 +1,7 @@
 {
   "name": "dsh-session-title-ruled",
   "version": "0.2.0",
-  "description": "按个人规则自动命名 dsh 会话：MMDD｜类型｜对话名。替换内置自然语言标题提供方，八类分类 + 起始日期固定 + 编号标题（dot 远程任务）保持不变。Ruled session titles for DeepSeek Harness.",
+  "description": "按固定规则自动命名 dsh 会话:MMDD｜类型｜对话名(八类型枚举,日期跟随最近一次对话,主题以最近消息为主综合全部上下文)。Ruled session titles for DeepSeek Harness: fixed MMDD｜type｜name format with an eight-type taxonomy.",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -15,24 +15,65 @@
       "patch": "./cordis.patch.yml"
     }
   },
+  "dshhub": {
+    "schemaVersion": 1,
+    "displayName": "dsh-session-title-ruled",
+    "summary": "替换 dsh 内置的自然语言会话标题:按 MMDD｜类型｜对话名 规则命名,八类型枚举,日期跟随最近一次对话,主题随上下文演进。",
+    "categories": [
+      "会话",
+      "Host",
+      "效率"
+    ],
+    "surfaces": [
+      "host"
+    ],
+    "capabilities": {
+      "provides": [
+        "service:session-title-ruled"
+      ]
+    },
+    "compatibility": {
+      "dsh": ">=0.1.7-rc.2",
+      "node": ">=20"
+    },
+    "permissions": {
+      "network": []
+    }
+  },
   "files": [
     "lib/index.js",
     "cordis.patch.yml",
     "README.md",
-    "CHANGELOG.md"
+    "README.en.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "icon.svg",
+    "docs/*.md"
   ],
+  "icon": "./icon.svg",
   "scripts": {
     "test": "node --test test/unit.mjs"
   },
   "dependencies": {
     "@deepseek-ai/schemastery": "^3.18.4"
   },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zycFrancis/dsh-session-title-ruled.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zycFrancis/dsh-session-title-ruled/issues"
+  },
   "keywords": [
     "deepseek",
     "deepseek-harness",
     "dsh",
     "dsh-plugin",
-    "session-title"
+    "session-title",
+    "cordis"
   ],
   "license": "MIT"
 }
