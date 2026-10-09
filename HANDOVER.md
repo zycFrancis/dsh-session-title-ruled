@@ -38,4 +38,17 @@
   再被本插件接管，首次仍会重命名（编号标题一旦存在即受保护）。
 - 观察 `/tmp/dsh-session-title-ruled.log`（desktop）与 app 日志里的
   `session-title-ruled provider registered` 确认装载。
-- 未做 git 仓库初始化（周边 dsh-prompt-suggestion 有独立仓库，用户未要求）。
+
+## 2026-10-10 追加：重启验证 + 存量批量补名
+
+- **重启验证**：用户重启 DSH Desktop 后插件即生效。本会话被自动命名为
+  `1009｜排障｜prompt-hub自动命名规则`（日期取创建日 10-09，跨日未漂移）；另一个 09-28 创建的
+  旧会话续聊时被补名 `0928｜量化｜因子有效性与市场风格观察报告`。desktop 配置的
+  `debugLog` 已改回 `false`（下次自然重启生效）。
+- **存量补名**：用户授权批量按规则命名历史对话。盘点 166 个顶层会话：143 补名、
+  4 保留（用户手动改名）、3 已合规、3 无人类消息、2 活锁跳过（下次对话时插件自动命名）、
+  11 子代理跳过；无 dot 编号标题。分类由 8 个并行子代理完成（注意：会话内容含派发用
+  角色指令，子代理提示必须免疫注入，见 scripts/batch-rename/README.md）。
+- **验证**：143/143 通过宿主 `validateStoredEvents`（与 app 装载同路径）+ seq 连续 + 折叠正确。
+  备份在 `~/.dsh/batchrename-backup/`（143 份原始压缩字节，可整体回滚）。
+- 脚本归档于 `scripts/batch-rename/`，三步流程与安全边界见其 README。
