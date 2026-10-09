@@ -163,6 +163,8 @@ test('空输出降级:首调空(带最低档)→重试不带档位→成功', as
   assert.equal(llm.calls.length, 2)
   assert.equal(llm.calls[0].reasoningEffort, 'low')
   assert.equal('reasoningEffort' in llm.calls[1], false)
+  // 首调与降级重试各自独立超时窗口。
+  assert.notEqual(llm.calls[0].signal, llm.calls[1].signal)
 })
 
 test('正文空而思考非空:取思考流尾段解析', async () => {
@@ -214,4 +216,19 @@ test('快照抛错不炸生成:日期退到 header.createdAt', async () => {
   }
   const result = await provider().generate(request(session, [{ seq: 8, text: '整理记忆' }]))
   assert.equal(result.title, '1003｜管理｜记忆整理')
+})
+
+test('单条消息超预算:截尾保一条而不是选择为空', async () => {
+  const llm = fakeLlm([chunks(text('排障｜长日志报错分析'), stop())], undefined)
+  const { ctx, provider } = harness(llm)
+  apply(ctx, { provider: 'p', model: 'm', maxInputBytes: 1024 })
+  const huge = '报错日志\n' + 'x'.repeat(20000) + '\n尾部是真正的提问:帮我分析这个崩溃'
+  const session = fakeSession([userMsg(8, day(9), huge)], day(9))
+  const result = await provider().generate(request(session, [{ seq: 8, text: huge }]))
+  assert.equal(result.title, '1009｜排障｜长日志报错分析')
+  assert.deepEqual(result.messageSeqs, [8])
+  // 送入的文本被截到预算内,且保住了尾部提问。
+  const sent = llm.calls[0].messages[0].content[0].text
+  assert.ok(Buffer.byteLength(sent, 'utf8') < 1400)
+  assert.ok(sent.includes('帮我分析这个崩溃'))
 })

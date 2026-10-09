@@ -85,7 +85,7 @@ desktop / web profile 由各自 app 掌管，重启后生效。
 
 ```bash
 pnpm install
-npm test        # 纯逻辑单测(日期、解析、截断、编号例外、消息选择)
+npm test        # 纯逻辑单测 + apply/generate mock 集成测试(共 23 例)
 ```
 
 - 设计与机制说明见 [docs/design.md](docs/design.md)。

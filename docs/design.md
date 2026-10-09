@@ -48,7 +48,7 @@ llm 流式 chunk 协议)在插件内自带实现;倒序扫日志这类折叠逻�
 "首帧恰好只含 header 行"。把全文解压重压成单帧,列表折叠(宽容路径)正常,
 但打开会话(严格路径)报 `corrupt Zstandard session log`。正确做法是保留原字节,
 把新增事件压成**独立帧追加**——这正是宿主自身追加事件的方式。
-详见 `scripts/batch-rename/batchrename-apply.py` 的 `frame_bytes` 注释。
+详见 `scripts/batch-rename/batchrename-apply.py` 的 `frame_bytes` 注释(脚本仅随 git 仓库分发,不入 npm 包)。
 
 ## 兼容性
 

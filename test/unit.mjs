@@ -97,6 +97,11 @@ test('selectMessages 预算内全量、超预算全部给最新消息', () => {
   // 极小预算:只装得下能装的最后几条,也不含旧首条。
   const tiny = selectMessages(big, 80)
   assert.ok(tiny.length >= 1 && tiny.every((m) => m.seq >= 198))
+  // 单条自身超预算:截尾保一条(UTF-8 安全、保尾部),绝不让选择为空。
+  const solo = selectMessages([{ seq: 1, text: '头'.repeat(3000) + '尾' + '🎉'.repeat(5) }], 200)
+  assert.equal(solo.length, 1)
+  assert.ok(solo[0].text.endsWith('🎉'))
+  assert.ok(Buffer.byteLength(JSON.stringify(solo.map((m) => ({ text: m.text }))), 'utf8') <= 200 + 64)
 })
 
 test('latestConversationStamp 取最近 user/message 日期', () => {

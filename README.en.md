@@ -85,7 +85,7 @@ Desktop / web profiles are owned by their apps; changes apply after restart.
 
 ```bash
 pnpm install
-npm test        # pure-logic unit tests (dates, parsing, truncation, numbered-title exception, message selection)
+npm test        # pure-logic unit tests plus apply/generate mock integration tests (23 cases)
 ```
 
 - Design notes: [docs/design.md](docs/design.md).
