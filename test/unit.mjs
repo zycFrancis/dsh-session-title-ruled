@@ -60,9 +60,17 @@ test('normalizeName 压空白、去首尾标点、按码点截断', () => {
   assert.equal(normalizeName('一二三。四五', 5), '一二三。四')
 })
 
-test('buildRuledTitle 输出三段全角竖线格式', () => {
+test('buildRuledTitle 输出三段全角竖线格式并守住 80 字节上限', () => {
   assert.equal(buildRuledTitle('0107', '开发', '会话命名插件'), '0107｜开发｜会话命名插件')
   assert.equal(TITLE_TYPES.length, 8)
+  // 长英文名:超 80B 时按码点截短,不留悬空分隔符。
+  const long = buildRuledTitle('0107', '开发', 'a'.repeat(60))
+  assert.ok(Buffer.byteLength(long, 'utf8') <= 80)
+  assert.ok(!/[｜\s]$/.test(long), `尾部残留分隔符: ${long}`)
+  assert.ok(long.startsWith('0107｜开发｜'))
+  // 代理对不被切断。
+  const emoji = buildRuledTitle('0107', '日常', '🎉'.repeat(30))
+  assert.ok(emoji.endsWith('🎉'))
 })
 
 test('shouldKeepTitle 保留 dot 编号标题、放过规则格式', () => {
