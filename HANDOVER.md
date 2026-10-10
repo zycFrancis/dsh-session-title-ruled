@@ -82,3 +82,15 @@
 - **发布**:https://github.com/zycFrancis/dsh-session-title-ruled (public,master 7 commits,
   tag v0.2.0 + gh release);发布后实证:git 规格安装 → 组合树解析 → 完整运行时生成
   `1010｜日常｜夏普比率解释`,provider 归因正确,测试 profile/会话已清理。
+
+## 2026-10-10 追加四:v0.2.1(第三轮审查遗留 minor 清零)
+
+- R3 的 4 条 minor 中,JSON 转义膨胀与 CHANGELOG 缺项已随 v0.2.0 修妥(e675433);
+  本版修剩余两条(04008e2):
+  1. 推理档选择只认语义关键词(off→low→medium),不再盲取 efforts[0](dsh-llm 对顺序
+     无契约,降序列表会显式请求最高档);三级都不匹配时裸调+降级链自愈。补 4 组回归用例。
+  2. debugLog 日志 /tmp → ~/.cache/dsh-session-title-ruled.log(自动建目录,0600),
+     消除世界可写目录的 symlink 攻击面;README 双语排查路径同步。
+- 验证:npm test 24/24;日志路径/权限(600)与内容实测通过。
+- 发布:tag v0.2.1 + GitHub Release;desktop/web profile 下次重启后沿用已接线
+  (link: 指向本仓库目录,代码即已更新;profile 无需改动)。
