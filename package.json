@@ -1,6 +1,6 @@
 {
   "name": "dsh-session-title-ruled",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "按固定规则自动命名 dsh 会话:MMDD｜类型｜对话名(八类型枚举,日期跟随最近一次对话,主题以最近消息为主综合全部上下文)。Ruled session titles for DeepSeek Harness: fixed MMDD｜type｜name format with an eight-type taxonomy.",
   "type": "module",
   "main": "lib/index.js",

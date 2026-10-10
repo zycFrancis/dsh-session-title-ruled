@@ -232,3 +232,29 @@ test('单条消息超预算:截尾保一条而不是选择为空', async () => {
   assert.ok(Buffer.byteLength(sent, 'utf8') < 1400)
   assert.ok(sent.includes('帮我分析这个崩溃'))
 })
+
+test('推理档选择只认语义关键词,不盲取 efforts[0]', async () => {
+  const cases = [
+    // 降序且无 off/low:旧实现会显式请求 high,现在应取 medium。
+    [{ id: 'high' }, { id: 'medium' }], 'medium',
+    // 有 low(无论顺序)取 low。
+    [{ id: 'high' }, { id: 'low' }], 'low',
+    // off 类关键词优先。
+    [{ id: 'minimal' }, { id: 'low' }], 'minimal',
+  ]
+  for (let i = 0; i < cases.length; i += 2) {
+    const llm = fakeLlm([chunks(text('日常｜测试'), stop())], { reasoning: { efforts: cases[i] } })
+    const { ctx, provider } = harness(llm)
+    apply(ctx, { provider: 'p', model: 'm' })
+    const session = fakeSession([userMsg(8, day(9), '测试')], day(9))
+    await provider().generate(request(session, [{ seq: 8, text: '测试' }]))
+    assert.equal(llm.calls[0].reasoningEffort, cases[i + 1], JSON.stringify(cases[i]))
+  }
+  // 三级关键词都不匹配(如自定义档名):不带档位裸调,交给降级链与思考尾段兜底。
+  const odd = fakeLlm([chunks(text('日常｜测试'), stop())], { reasoning: { efforts: [{ id: 'turbo' }, { id: 'deep' }] } })
+  const { ctx, provider } = harness(odd)
+  apply(ctx, { provider: 'p', model: 'm' })
+  const session = fakeSession([userMsg(8, day(9), '测试')], day(9))
+  await provider().generate(request(session, [{ seq: 8, text: '测试' }]))
+  assert.equal('reasoningEffort' in odd.calls[0], false)
+})
